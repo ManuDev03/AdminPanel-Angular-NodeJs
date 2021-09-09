@@ -1,28 +1,43 @@
+const User = require('../models/user.Models')
+const bcrypt = require('bcryptjs')
 const postUser = async(request,response)=>{
     console.log(`Input Received: ${JSON.stringify(request.body)}`);
+    const user = new User({
+        name: request.body.name,
+        email: request.body.email,
+        passwordHash: bcrypt.hashSync(request.body.password),
+        phone: request.body.phone,
+        isAdmin: request.body.isAdmin,
+        apartment: request.body.apartment,
+        zipcode: request.body.zipcode,
+        street: request.body.street,
+        city: request.body.city,
+        country: request.body.country,
+    })
     try {
-       
-        return response.status(201).json({message:"user is added to records"});
+        await user.save()
+        return response.status(201).json(user);
 
     } catch (error) {
-        return response.status(500).json({message:"error occured !!"});
+        return response.status(500).json(error);
     }
     
 }
 const getUsers = async(request,response)=>{
-    try {
 
-        response.status(201).json({message:"all users from records"});
+    try {
+        const user = await User.find().select('-passwordHash')
+        response.status(201).json(user);
     }
-    catch(err)
+    catch(error)
     {
-        response.status(500).json({message:"error occured !!"});
+        response.status(500).json(error);
     }
 }
 const getUserById = async(request,response)=>{
     try {
-
-        response.status(201).json({message:"individual user from records"});
+        const user = await User.findById(request.params.userId).select('-passwordHash')
+        response.status(201).json(user);
     }
     catch(err)
     {
@@ -31,8 +46,8 @@ const getUserById = async(request,response)=>{
 }
 const updateUserById = async(request,response)=>{
     try {
-
-        response.status(201).json({message:"updated individual user from records"});
+        const user = await User.findByIdAndUpdate(request.params.userId,request.body,{new:true})
+        response.status(201).json(user);
     }
     catch(err)
     {
@@ -42,7 +57,8 @@ const updateUserById = async(request,response)=>{
 const deleteUserById = async(request,response)=>{
     try {
 
-        response.status(201).json({message:"deleted individual user from records"});
+        const user = await User.findByIdAndDelete(request.params.userId)
+        response.status(201).json(user);
     }
     catch(err)
     {
