@@ -16,4 +16,8 @@ router.route('/users/:userId')
 router.route('/users/login')
 .post(usersController.loginUser)
 
+router.route('/users/logout')
+.post(auth,usersController.logoutUser)
+
+
 module.exports = router

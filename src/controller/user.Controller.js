@@ -78,12 +78,28 @@ const loginUser = async(request,response)=>{
         user.tokens = user.tokens.concat({ token })
         await user.save()
         response.status(201).json({user:user,token: token})
-        
+
     } catch (error) {
         response.status(400).json(error)
-        console.log(error)
     }
 
+}
+
+const logoutUser = async(request,response)=>{
+    try{
+        console.log("controller called")
+        console.log(request.user.tokens)
+        request.user.tokens = request.user.tokens.filter((token) => {
+            return token.token !== request.token
+        })
+        await request.user.save()
+        response.status(201).json('user logged out')
+
+    }
+    catch(error){
+        response.status(400).json(error)
+
+    }
 }
 
 
@@ -93,5 +109,6 @@ module.exports = {
     getUserById,
     updateUserById,
     deleteUserById,
-    loginUser
+    loginUser,
+    logoutUser
   };

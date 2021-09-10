@@ -1,21 +1,24 @@
 const jwt = require('jsonwebtoken')
+const User = require('../models/user.Models')
 
 
-const auth = async (req, res, next) => {
-
-    // try{
-    const token = req.headers.authorization.replace('Bearer', '')
-    const decoded = jwt.verify(token,process.env.secret)
-    console.log(decoded)
-    console.log(token)
-    console.log(process.env.secret)
-    next()
-    // }
-
-// catch(err)
-// {
-//     res.status(401).send({error: 'please authenticate'}) 
-// }
-// next()
+const auth = async (request, response, next) => {
+    try {
+        const token = request.header('Authorization').replace('Bearer ', '')
+        const decoded = jwt.verify(token, process.env.secret)
+        const user = await User.findOne({ _id: decoded.userId, 'tokens.token': token })
+        console.log(token)
+        console.log(decoded)
+        console.log(user)
+        if (!user) {
+            throw new Error()
+        }
+        request.token = token
+        request.user = user
+        next()
+    } catch (e) {
+        response.status(401).send({ error: 'Please authenticate.' })
+    }
 }
+
 module.exports = auth
