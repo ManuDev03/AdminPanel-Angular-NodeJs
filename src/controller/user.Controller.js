@@ -73,9 +73,12 @@ const loginUser = async(request,response)=>{
         const token = jwt.sign({
             userId: user.id
         },
-        process.env.secret)
+        process.env.secret,{expiresIn:"1d"})
+
+        user.tokens = user.tokens.concat({ token })
+        await user.save()
+        response.status(201).json({user:user,token: token})
         
-        response.status(201).json({user:user.email,token: token})
     } catch (error) {
         response.status(400).json(error)
         console.log(error)

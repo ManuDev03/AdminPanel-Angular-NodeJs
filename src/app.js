@@ -6,13 +6,16 @@ const morganLogger = require('./middleware/logger')
 const userRouter = require('./routers/user.Router')
 require('./db/mongoose')
 
+
+
 //configuration
 dotenv.config({path:path.resolve(process.cwd(),"src/config/.env")})
 const port = process.env.PORT || 3000
 
-//middleware
+// middleware
 app.use(morganLogger)
 app.use(express.json())
+
 app.use('/api', userRouter);
 
 

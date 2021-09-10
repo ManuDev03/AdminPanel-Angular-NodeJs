@@ -42,7 +42,13 @@ const userSchema = new Schema({
     country: {
         type: String,
         default: ''
-    }
+    },
+    tokens:[{
+        token:{
+            type: String,
+            required: true
+            }
+    }]
 });
 
 userSchema.virtual('id').get(function(){
