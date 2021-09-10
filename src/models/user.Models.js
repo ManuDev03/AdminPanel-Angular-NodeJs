@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs')
 const {Schema} = mongoose;
 
 const userSchema = new Schema({
@@ -52,5 +53,21 @@ userSchema.set('toJSON',{
     virtuals:true
 })
 
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({ email })
 
-module.exports = mongoose.model("user", userSchema)
+    if (!user) {
+        throw new Error('Unable to login')
+    } 
+    
+    const isMatch = await bcrypt.compare(password, user.passwordHash)
+
+    if (!isMatch) {
+        throw new Error('Unable to login')
+    }
+
+    return user
+}
+
+const User = mongoose.model("user", userSchema)
+module.exports = User

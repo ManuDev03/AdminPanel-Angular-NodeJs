@@ -12,4 +12,7 @@ router.route('/users/:userId')
 .put(usersController.updateUserById)
 .delete(usersController.deleteUserById);
 
+router.route('/users/login')
+.post(usersController.loginUser)
+
 module.exports = router

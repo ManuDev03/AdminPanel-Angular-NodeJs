@@ -39,9 +39,9 @@ const getUserById = async(request,response)=>{
         const user = await User.findById(request.params.userId).select('-passwordHash')
         response.status(201).json(user);
     }
-    catch(err)
+    catch(error)
     {
-        response.status(500).json({message:"error occured !!"});
+        response.status(500).json(error);
     }
 }
 const updateUserById = async(request,response)=>{
@@ -49,9 +49,9 @@ const updateUserById = async(request,response)=>{
         const user = await User.findByIdAndUpdate(request.params.userId,request.body,{new:true})
         response.status(201).json(user);
     }
-    catch(err)
+    catch(error)
     {
-        response.status(500).json({message:"error occured !!"});
+        response.status(500).json(error);
     }
 }
 const deleteUserById = async(request,response)=>{
@@ -60,10 +60,22 @@ const deleteUserById = async(request,response)=>{
         const user = await User.findByIdAndDelete(request.params.userId)
         response.status(201).json(user);
     }
-    catch(err)
+    catch(error)
     {
-        response.status(500).json({message:"error occured !!"});
+        response.status(500).json(error);
     }
+}
+
+const loginUser = async(request,response)=>{
+    try {
+        const user = await User.findByCredentials(request.body.email, request.body.password)
+        
+        response.status(201).json(user)
+    } catch (error) {
+        response.status(400).json(error)
+        console.log(error)
+    }
+
 }
 
 
@@ -72,5 +84,6 @@ module.exports = {
     getUsers,
     getUserById,
     updateUserById,
-    deleteUserById
+    deleteUserById,
+    loginUser
   };
