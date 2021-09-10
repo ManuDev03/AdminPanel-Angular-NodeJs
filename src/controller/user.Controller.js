@@ -1,5 +1,6 @@
 const User = require('../models/user.Models')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const postUser = async(request,response)=>{
     console.log(`Input Received: ${JSON.stringify(request.body)}`);
     const user = new User({
@@ -69,8 +70,12 @@ const deleteUserById = async(request,response)=>{
 const loginUser = async(request,response)=>{
     try {
         const user = await User.findByCredentials(request.body.email, request.body.password)
+        const token = jwt.sign({
+            userId: user.id
+        },
+        process.env.secret)
         
-        response.status(201).json(user)
+        response.status(201).json({user:user.email,token: token})
     } catch (error) {
         response.status(400).json(error)
         console.log(error)
